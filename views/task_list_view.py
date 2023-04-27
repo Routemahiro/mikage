@@ -23,6 +23,8 @@ class TaskListView(QWidget):
 
     def add_task_to_list(self, task_name):
         self.task_list_widget.addItem(task_name)
+        self.new_task_input.clear()  # 入力欄の文字を削除
+
 
     def get_new_task_name(self):
         return self.new_task_input.text()
