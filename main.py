@@ -25,6 +25,7 @@ if __name__ == '__main__':
     # タイマービューとタスクリストビューを表示します
     timer_controller.view.show()
     task_list_controller.view.show()
+    
 
     sys.exit(app.exec())
 

@@ -7,17 +7,10 @@ class CharacterWindow(QWidget):
     def __init__(self):
         super().__init__()
 
-        # メインレイアウト
-        self.layout = QVBoxLayout()
-        self.layout.setContentsMargins(0, 0, 0, 0)
-
-        # キャラクターと設定ボタンのレイアウト
-        self.character_layout = QHBoxLayout()
-
         # キャラクター画像
         self.character_label = QLabel(self)
         pixmap = QPixmap("img\character.png")
-        
+
         # ディスプレイサイズの取得
         screen = QApplication.primaryScreen().availableGeometry()
 
@@ -26,28 +19,27 @@ class CharacterWindow(QWidget):
         pixmap = pixmap.scaled(screen.width() // resize_bairitsu, screen.height() // resize_bairitsu, Qt.KeepAspectRatio)
 
         self.character_label.setPixmap(pixmap)
-        self.character_layout.addWidget(self.character_label)
+        self.character_label.setGeometry(0, 0, pixmap.width(), pixmap.height())
 
         # 設定ボタン
-        self.setting_button = QPushButton()
+        self.setting_button = QPushButton(self)
         self.setting_button.setIcon(QIcon('img\setting_icon.png'))  # アイコンを設定
-        self.setting_button.setIconSize(QSize(24, 24))  # アイコンサイズを設定
+        self.setting_button.setIconSize(QSize(40, 40))  # アイコンサイズを設定
+        self.setting_button.setFixedSize(QSize(50, 50))  # ボタンのサイズを設定
+        
+        # ボタンの背景を透明にするためのスタイルシートを設定
+        self.setting_button.setStyleSheet("background-image: url('img\transparent_background.png'); border: none;")
 
-        # CSSスタイルシートを設定
-        self.setting_button.setStyleSheet("""
-            QPushButton {
-                background-color: rgba(255, 255, 255, 127);  # 半透明の白色
-                border-radius: 15px;  # 半径15pxの丸形
-            }
-        """)
+        self.setting_button.setAttribute(Qt.WA_TranslucentBackground)
 
-        self.character_layout.addWidget(self.setting_button)
-
-        self.layout.addLayout(self.character_layout)
+        # ボタンの位置を移動
+        button_pos_x = 240  # これは任意のx座標
+        button_pos_y = self.character_label.height() // 15  
+        self.setting_button.move(button_pos_x, button_pos_y)  # (x, y)座標を指定
 
         # テキストエディットエリア
         self.chat_text_area = QTextEdit()
-
+        
         palette = self.chat_text_area.palette()
         palette.setColor(QPalette.Base, QColor(0, 0, 0, 127))  # 背景色を半透明の黒に
         palette.setColor(QPalette.Text, QColor(255, 255, 255))  # テキスト色を白に
@@ -55,30 +47,75 @@ class CharacterWindow(QWidget):
 
         self.chat_text_area.textChanged.connect(self.adjust_text_area_height)
 
+        self.chat_text_area.setStyleSheet("""
+            QTextEdit {
+                background-color: rgba(0, 0, 0, 125);
+                border-radius: 10px;
+                padding: 1px;
+                color: white;
+            }
+        """)
+
+
+
+
         # 初期は2行分の高さに設定
-        self.chat_text_area.setMaximumHeight(self.chat_text_area.fontMetrics().lineSpacing() * 2)
-
-        self.layout.addWidget(self.chat_text_area)
-
-        self.setLayout(self.layout)
+        self.chat_text_area.setMaximumHeight(self.chat_text_area.fontMetrics().lineSpacing() * 1)
 
         # ウィンドウ設定
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
 
+        # ボタンの背景を透明に
+        self.setting_button.setAttribute(Qt.WA_TranslucentBackground)
+
         # ドラッグでウィンドウを移動するための変数
         self.m_drag = False
         self.m_DragPosition = QPoint()
 
+        # 送信ボタンの作成
+        self.send_button = QPushButton("Send", self)
+        self.send_button.clicked.connect(self.send_message)
+
+        # レイアウトの設定
+        self.layout = QVBoxLayout(self)
+        self.layout.addWidget(self.character_label)
+        self.layout.addWidget(self.chat_text_area)
+        self.layout.addWidget(self.send_button)  # 送信ボタンをレイアウトに追加
+
+        self.setLayout(self.layout)
+        # テキストエリアにフォーカスを設定
+        self.chat_text_area.setFocus()        
+
+    def send_message(self):
+        user_message = self.chat_text_area.toPlainText()  # ユーザーが入力したテキストを取得
+        self.chat_text_area.clear()  # テキストエディットエリアをクリア
+
+        # ユーザーが何も入力していない場合は、何もしない
+        if user_message.strip() == "":
+            return
+            
+        # キャラクターとのチャット処理を実行（ここではダミーの応答を返す）
+        character_response = f"美影: {user_message}"
+        
+        # 応答をテキストエディットエリアに表示
+        response_label = QLabel(character_response)
+        response_label.setStyleSheet("""
+            QLabel {
+                background-color: rgba(255, 255, 255, 127);
+                border-radius: 10px;
+                padding: 10px;
+                color: white;
+            }
+        """)
+        self.layout.addWidget(response_label)  # レイアウトに追加
+                                                        
+
     def adjust_text_area_height(self):
-        # 行の数を取得
-        num_lines = self.chat_text_area.document().lineCount()
-
-        # 行の高さを取得
-        line_height = self.chat_text_area.fontMetrics().lineSpacing()
-
-        # テキストエディットエリアの高さを調整
-        self.chat_text_area.setMaximumHeight(line_height * num_lines)
+        # テキストエリアの内容に基づいて高さを調整
+        doc_height = self.chat_text_area.document().size().height()+10
+        self.chat_text_area.setMaximumHeight(doc_height + 5)  # +5はパディング分
+              
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
