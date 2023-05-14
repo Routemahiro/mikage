@@ -3,12 +3,20 @@ from PySide6.QtWidgets import QApplication
 from PySide6.QtGui import QGuiApplication
 from controllers.timer_controller import TimerController
 from controllers.task_list_controller import TaskListController
+from views.timer_view import CharacterWindow  # 追加
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
 
+    # CharacterWindow のインスタンスを作成
+    character_window = CharacterWindow()
+    character_window.show()  # ウィンドウを表示
+
+
+
     # タイマーコントローラーとタスクリストコントローラーをインスタンス化します
-    timer_controller = TimerController()
+    timer_controller = TimerController(character_window)  # character_window を渡す
     task_list_controller = TaskListController()
 
     # ディスプレイサイズを取得します
@@ -25,7 +33,5 @@ if __name__ == '__main__':
     # タイマービューとタスクリストビューを表示します
     timer_controller.view.show()
     task_list_controller.view.show()
-    
 
     sys.exit(app.exec())
-
