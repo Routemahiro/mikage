@@ -1,6 +1,6 @@
-from PySide6.QtWidgets import QApplication, QTextEdit, QVBoxLayout, QPushButton, QLabel, QHBoxLayout, QWidget,QGridLayout
+from PySide6.QtWidgets import QApplication, QTextEdit, QVBoxLayout, QPushButton, QLabel, QHBoxLayout, QWidget
 from PySide6.QtGui import QPixmap, QIcon, QPalette, QColor
-from PySide6.QtCore import Qt, QPoint, QSize,QEvent
+from PySide6.QtCore import Qt, QPoint, QSize
 
 
 class CharacterWindow(QWidget):
@@ -78,39 +78,14 @@ class CharacterWindow(QWidget):
         self.send_button.clicked.connect(self.send_message)
 
         # レイアウトの設定
-        self.layout = QGridLayout(self)
-        self.layout.addWidget(self.character_label, 0, 0, 1, 2)
-        self.layout.addWidget(self.chat_text_area, 1, 0)
-        self.layout.addWidget(self.send_button, 1, 1)  # 送信ボタンをレイアウトに追加
+        self.layout = QVBoxLayout(self)
+        self.layout.addWidget(self.character_label)
+        self.layout.addWidget(self.chat_text_area)
+        self.layout.addWidget(self.send_button)  # 送信ボタンをレイアウトに追加
 
         self.setLayout(self.layout)
         # テキストエリアにフォーカスを設定
-        self.chat_text_area.setFocus()    
-
-        self.chat_text_area.installEventFilter(self)    
-
-
-    def eventFilter(self, obj, event):
-        if obj == self.chat_text_area and event.type() == QEvent.KeyPress:
-            if event.key() == Qt.Key_Return and event.modifiers() & Qt.ShiftModifier:
-                self.send_message()
-                return True
-        return super().eventFilter(obj, event)
-
-    def show_finished_message(self):
-        # キャラクターが終わったことを伝える吹き出しメッセージを表示
-        dummy_message = "美影: 25分が経過しました！"
-        response_label = QLabel(dummy_message)
-        response_label.setStyleSheet("""
-            QLabel {
-                background-color: rgba(255, 255, 255, 255);
-                border-radius: 10px;
-                padding: 10px;
-                color: black;
-            }
-        """)
-        self.layout.addWidget(response_label, 2, 0, 1, 2)  # レイアウトに追加
-
+        self.chat_text_area.setFocus()        
 
     def send_message(self):
         user_message = self.chat_text_area.toPlainText()  # ユーザーが入力したテキストを取得
@@ -127,10 +102,10 @@ class CharacterWindow(QWidget):
         response_label = QLabel(character_response)
         response_label.setStyleSheet("""
             QLabel {
-                background-color: rgba(255, 255, 255, 255);
+                background-color: rgba(255, 255, 255, 127);
                 border-radius: 10px;
                 padding: 10px;
-                color: black;
+                color: white;
             }
         """)
         self.layout.addWidget(response_label)  # レイアウトに追加
@@ -158,7 +133,7 @@ class CharacterWindow(QWidget):
     def mouseReleaseEvent(self, event):
         if event.button() == Qt.LeftButton:
             self.m_drag = False
-    
+
 
 class TimerView(QWidget):
     def __init__(self):
@@ -167,6 +142,9 @@ class TimerView(QWidget):
         # UIコンポーネントの作成
         self.layout = QVBoxLayout()
 
+        # キャラクターウィンドウを作成し表示
+        self.character_window = CharacterWindow()
+        self.character_window.show()
 
         self.time_label = QLabel("25:00")
         self.layout.addWidget(self.time_label)
