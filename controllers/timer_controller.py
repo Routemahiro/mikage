@@ -1,11 +1,11 @@
 from models.timer import Timer
-from models.task_list import TaskList
+# from models.task_list import TaskList
 from views.timer_view import TimerView
 
 class TimerController:
     def __init__(self):
         self.timer = Timer()
-        self.task_list = TaskList()
+        # self.task_list = TaskList()
         self.view = TimerView()
 
         # イベントハンドラの設定
