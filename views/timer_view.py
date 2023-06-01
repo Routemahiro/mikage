@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QApplication, QTextEdit, QVBoxLayout, QPushButton, QLabel, QHBoxLayout, QWidget
 from PySide6.QtGui import QPixmap, QIcon, QPalette, QColor
 from PySide6.QtCore import Qt, QPoint, QSize
-
+from controllers import ai_controller
 
 class CharacterWindow(QWidget):
     def __init__(self):
@@ -87,19 +87,35 @@ class CharacterWindow(QWidget):
         # テキストエリアにフォーカスを設定
         self.chat_text_area.setFocus()        
 
+
     def send_message(self):
+        # AIコントローラのインスタンス化
+        ai_instance = ai_controller.AIController()
+
         user_message = self.chat_text_area.toPlainText()  # ユーザーが入力したテキストを取得
         self.chat_text_area.clear()  # テキストエディットエリアをクリア
 
         # ユーザーが何も入力していない場合は、何もしない
         if user_message.strip() == "":
             return
-            
-        # キャラクターとのチャット処理を実行（ここではダミーの応答を返す）
-        character_response = f"美影: {user_message}"
-        
+
+        # ユーザーのメッセージをAIに送信し、応答を取得
+        character_response = ai_instance.add_user_message(user_message)
+    
+        response_label = QLabel(f"user: {user_message}")
+        response_label.setStyleSheet("""
+            QLabel {
+                background-color: rgba(0, 0, 0, 127);
+                border-radius: 10px;
+                padding: 10px;
+                color: white;
+            }
+        """)
+        self.layout.addWidget(response_label)  # レイアウトに追加
+
+
         # 応答をテキストエディットエリアに表示
-        response_label = QLabel(character_response)
+        response_label = QLabel(f"美影: {character_response}")
         response_label.setStyleSheet("""
             QLabel {
                 background-color: rgba(255, 255, 255, 127);
@@ -109,7 +125,8 @@ class CharacterWindow(QWidget):
             }
         """)
         self.layout.addWidget(response_label)  # レイアウトに追加
-                                                        
+
+
 
     def adjust_text_area_height(self):
         # テキストエリアの内容に基づいて高さを調整
@@ -129,7 +146,7 @@ class CharacterWindow(QWidget):
             self.move(event.globalPos() - self.m_DragPosition)
             event.accept()
 
-    # マウスボタンが離された時のイベント
+    # マウスボタンが離された時のイベントsd
     def mouseReleaseEvent(self, event):
         if event.button() == Qt.LeftButton:
             self.m_drag = False
@@ -146,14 +163,14 @@ class TimerView(QWidget):
         self.character_window = CharacterWindow()
         self.character_window.show()
 
-        self.time_label = QLabel("25:00")
-        self.layout.addWidget(self.time_label)
+        # self.time_label = QLabel("25:00")
+        # self.layout.addWidget(self.time_label)
 
-        self.start_button = QPushButton("Start")  # ここでstart_buttonを定義
-        self.layout.addWidget(self.start_button)
+        # self.start_button = QPushButton("Start")  # ここでstart_buttonを定義
+        # self.layout.addWidget(self.start_button)
 
-        self.reset_button = QPushButton("Reset")  # ここでreset_buttonを定義
-        self.layout.addWidget(self.reset_button)
+        # self.reset_button = QPushButton("Reset")  # ここでreset_buttonを定義
+        # self.layout.addWidget(self.reset_button)
 
         self.setLayout(self.layout)
 
