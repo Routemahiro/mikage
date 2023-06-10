@@ -1,5 +1,5 @@
 import sqlite3
-from .models.pomodoro_models import PomodoroSession, WindowActivity
+from models.pomodoro_models import PomodoroSession, WindowActivity
 
 class PomodoroDBController:
 

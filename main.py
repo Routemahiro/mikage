@@ -18,7 +18,4 @@ if __name__ == '__main__':
     screen_width = screen_geometry.width()
     screen_height = screen_geometry.height()
 
-
-
     sys.exit(app.exec())
-

@@ -1,6 +1,8 @@
 import sqlite3
 import os
 
+
+
 DB_DIR = 'database/data'
 DB_PATH = os.path.join(DB_DIR, 'mikage_timer.db')
 

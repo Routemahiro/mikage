@@ -2,10 +2,12 @@ from PySide6.QtWidgets import QApplication, QTextEdit, QVBoxLayout, QPushButton,
 from PySide6.QtGui import QPixmap, QIcon, QPalette, QColor
 from PySide6.QtCore import Qt, QPoint, QSize
 from controllers import ai_controller
+from PySide6.QtWidgets import QVBoxLayout
 
 class CharacterWindow(QWidget):
-    def __init__(self):
+    def __init__(self, pomodoro_controller):
         super().__init__()
+        self.pomodoro_controller = pomodoro_controller
 
         # キャラクター画像
         self.character_label = QLabel(self)
@@ -88,10 +90,11 @@ class CharacterWindow(QWidget):
         self.chat_text_area.setFocus()        
 
 
-    def send_message(self):
-        # AIコントローラのインスタンス化
-        ai_instance = ai_controller.AIController()
 
+        
+    def send_message(self):
+            # AIコントローラのインスタンス化
+        ai_instance = ai_controller.AIController()
         user_message = self.chat_text_area.toPlainText()  # ユーザーが入力したテキストを取得
         self.chat_text_area.clear()  # テキストエディットエリアをクリア
 
@@ -100,8 +103,8 @@ class CharacterWindow(QWidget):
             return
 
         # ユーザーのメッセージをAIに送信し、応答を取得
-        character_response = ai_instance.add_user_message(user_message)
-    
+        character_response = self.pomodoro_controller.ai_instance.add_user_message(user_message)
+
         response_label = QLabel(f"user: {user_message}")
         response_label.setStyleSheet("""
             QLabel {
@@ -152,25 +155,28 @@ class CharacterWindow(QWidget):
             self.m_drag = False
 
 
+
+
 class TimerView(QWidget):
-    def __init__(self):
+    def __init__(self, pomodoro_controller):
         super().__init__()
 
-        # UIコンポーネントの作成
-        self.layout = QVBoxLayout()
-
         # キャラクターウィンドウを作成し表示
-        self.character_window = CharacterWindow()
+        self.character_window = CharacterWindow(pomodoro_controller)
         self.character_window.show()
 
-        # self.time_label = QLabel("25:00")
-        # self.layout.addWidget(self.time_label)
+        # Layoutを設定
+        self.layout = QVBoxLayout()  # 追加
 
-        # self.start_button = QPushButton("Start")  # ここでstart_buttonを定義
-        # self.layout.addWidget(self.start_button)
-
-        # self.reset_button = QPushButton("Reset")  # ここでreset_buttonを定義
-        # self.layout.addWidget(self.reset_button)
+        # タイマーのスタートボタンを押したときのアクションを設定
+        self.start_button = QPushButton("Start")
+        self.start_button.clicked.connect(pomodoro_controller.start_session)
+        self.layout.addWidget(self.start_button)
+        
+        # タイマーのリセットボタンを押したときのアクションを設定
+        self.reset_button = QPushButton("Reset")
+        self.reset_button.clicked.connect(pomodoro_controller.end_session)
+        self.layout.addWidget(self.reset_button)
 
         self.setLayout(self.layout)
 
