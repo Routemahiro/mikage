@@ -34,7 +34,7 @@ if __name__ == '__main__':
     thread.start()
 
     # Run the pomodoro timer
-    timer_controller.start_timer()
+    timer_controller.toggle_timer()
 
     # After the timer ends, generate AI comment and stop tracking
     ai_comment = ai_controller.get_ai_comment(tracker.get_active_window_data())
