@@ -8,7 +8,7 @@ from controllers.ActiveWindowTracker import ActiveWindowTracker
 from controllers.pomodoro_db_controller import PomodoroDBController
 # from database.init_db import start_pomodoro_session, end_pomodoro_session
 import time
-
+import threading
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
@@ -30,7 +30,8 @@ if __name__ == '__main__':
     
     # Start tracking window activity
     tracker = ActiveWindowTracker(db_controller, session_id)
-    tracker.start_tracking()
+    thread = threading.Thread(target=tracker.start_tracking)
+    thread.start()
 
     # Run the pomodoro timer
     timer_controller.start_timer()

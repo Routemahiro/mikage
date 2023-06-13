@@ -4,6 +4,7 @@ from datetime import datetime
 from controllers.pomodoro_db_controller import PomodoroDBController
 import time
 
+
 class ActiveWindowTracker:
     def __init__(self, db_controller: PomodoroDBController, session_id):
         self.db_controller = db_controller

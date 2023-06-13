@@ -91,9 +91,10 @@ class PomodoroDBController:
     def add_window_activity(self, session_id, timestamp, title):
         cursor = self.conn.cursor()
         cursor.execute('''
-            INSERT INTO WindowActivity (session_id, timestamp, title)
+            INSERT INTO WindowActivity (session_id, time, window_name)
             VALUES (?, ?, ?)
         ''', (session_id, timestamp, title,))
+
         self.conn.commit()
 
 
