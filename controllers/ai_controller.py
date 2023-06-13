@@ -28,3 +28,25 @@ class AIController:
             if "text" in choice:
                 return choice.text
         return response.choices[0].message.content
+
+    def generate_session_comment(self, window_times):
+        # Construct prompt for GPT-4
+        prompt = self.construct_prompt(window_times)
+
+        # Generate AI comment
+        ai_comment = self.get_ai_comment(prompt)
+
+        # return the AI comment
+        return ai_comment
+    
+
+    def construct_prompt(self, window_times):
+        # TODO: Implement method to construct prompt from window times
+        pass
+
+    def get_ai_comment(self, prompt):
+        # Setup the message log with the prompt
+        self.message_log = [{"role": "system", "content": f"以下でカッコに区切られたコードを元に、ユーザーの作業内容を褒めてください[{prompt}]"}]
+        
+        # Call get_response to generate the comment from GPT-4
+        return self.get_response()
